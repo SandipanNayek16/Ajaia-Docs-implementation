@@ -21,25 +21,32 @@ export default function ImportFile({ userId }: { userId: string }) {
     setIsUploading(true)
 
     try {
-      const text = await file.text()
       const title = file.name.replace(/\.[^/.]+$/, "")
-      
-      // Basic conversion: split by paragraphs
-      const paragraphs = text.split('\n\n').filter(p => p.trim() !== '')
-      
-      const content = {
-        type: "doc",
-        content: paragraphs.length > 0 ? paragraphs.map(p => ({
-          type: "paragraph",
+      let content;
+
+      // Check if it's a text-based file
+      if (file.type.startsWith('text/') || file.type === 'application/json' || file.name.endsWith('.md') || file.name.endsWith('.csv')) {
+        const text = await file.text()
+        const paragraphs = text.split('\n\n').filter(p => p.trim() !== '')
+        
+        content = {
+          type: "doc",
+          content: paragraphs.length > 0 ? paragraphs.map(p => ({
+            type: "paragraph",
+            content: [{ type: "text", text: p.trim() }]
+          })) : [{ type: "paragraph" }]
+        }
+      } else {
+        // For binary files, images, etc., create a placeholder document
+        content = {
+          type: "doc",
           content: [
             {
-              type: "text",
-              text: p.trim()
+              type: "paragraph",
+              content: [{ type: "text", text: `[Imported ${file.type || 'binary'} file: ${file.name}]` }]
             }
           ]
-        })) : [
-          { type: "paragraph" }
-        ]
+        }
       }
 
       const supabase = createClient()
@@ -55,12 +62,14 @@ export default function ImportFile({ userId }: { userId: string }) {
         .select()
         .single()
 
-      if (error || !data) throw error
+      if (error) throw new Error(`Supabase error: ${error.message} - ${error.details || ''}`)
+      if (!data) throw new Error('No data returned from insert')
 
       router.push(`/documents/${data.id}`)
-    } catch (e) {
-      console.error('Import failed', e)
-      setErrorMsg('Unable to import this file. Please try again.')
+    } catch (e: any) {
+      console.error('Import failed', e?.message || e)
+      console.error('Full error object:', JSON.stringify(e, Object.getOwnPropertyNames(e)))
+      setErrorMsg(`Unable to import this file: ${e?.message || 'Unknown error'}`)
     } finally {
       setIsUploading(false)
       if (fileInputRef.current) fileInputRef.current.value = ''
