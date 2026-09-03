@@ -46,42 +46,58 @@ CREATE POLICY "Owners can insert documents"
   ON documents FOR INSERT 
   WITH CHECK (auth.uid() = owner_id);
 
+-- Function to check if user is shared on a document (bypasses RLS to prevent recursion)
+CREATE OR REPLACE FUNCTION is_shared_user(doc_id UUID)
+RETURNS BOOLEAN
+LANGUAGE sql SECURITY DEFINER SET search_path = public
+AS $$
+  SELECT EXISTS (
+    SELECT 1 FROM document_shares 
+    WHERE document_id = doc_id 
+    AND user_email = (SELECT email FROM auth.users WHERE id = auth.uid())
+  );
+$$;
+
 -- Shared users can read documents
 CREATE POLICY "Shared users can view documents" 
   ON documents FOR SELECT 
-  USING (
-    EXISTS (
-      SELECT 1 FROM document_shares 
-      WHERE document_id = documents.id 
-      AND user_email = (SELECT email FROM auth.users WHERE id = auth.uid())
-    )
+  USING (is_shared_user(id));
+
+-- Function to check if user is editor on a document (bypasses RLS to prevent recursion)
+CREATE OR REPLACE FUNCTION is_shared_editor(doc_id UUID)
+RETURNS BOOLEAN
+LANGUAGE sql SECURITY DEFINER SET search_path = public
+AS $$
+  SELECT EXISTS (
+    SELECT 1 FROM document_shares 
+    WHERE document_id = doc_id 
+    AND permission = 'editor'
+    AND user_email = (SELECT email FROM auth.users WHERE id = auth.uid())
   );
+$$;
 
 -- Shared editors can update documents
 CREATE POLICY "Shared editors can update documents" 
   ON documents FOR UPDATE 
-  USING (
-    EXISTS (
-      SELECT 1 FROM document_shares 
-      WHERE document_id = documents.id 
-      AND permission = 'editor'
-      AND user_email = (SELECT email FROM auth.users WHERE id = auth.uid())
-    )
+  USING (is_shared_editor(id));
+
+
+-- Function to check if user owns a document (bypasses RLS to prevent recursion)
+CREATE OR REPLACE FUNCTION is_document_owner(doc_id UUID)
+RETURNS BOOLEAN
+LANGUAGE sql SECURITY DEFINER SET search_path = public
+AS $$
+  SELECT EXISTS (
+    SELECT 1 FROM documents 
+    WHERE id = doc_id 
+    AND owner_id = auth.uid()
   );
-
-
--- 4. RLS Policies for Document Shares
+$$;
 
 -- Owners can view shares for their documents
 CREATE POLICY "Owners can view shares" 
   ON document_shares FOR SELECT 
-  USING (
-    EXISTS (
-      SELECT 1 FROM documents 
-      WHERE id = document_shares.document_id 
-      AND owner_id = auth.uid()
-    )
-  );
+  USING (is_document_owner(document_id));
 
 -- Shared users can view their own shares
 CREATE POLICY "Users can view their own shares" 
@@ -91,35 +107,17 @@ CREATE POLICY "Users can view their own shares"
 -- Owners can insert shares for their documents
 CREATE POLICY "Owners can insert shares" 
   ON document_shares FOR INSERT 
-  WITH CHECK (
-    EXISTS (
-      SELECT 1 FROM documents 
-      WHERE id = document_shares.document_id 
-      AND owner_id = auth.uid()
-    )
-  );
+  WITH CHECK (is_document_owner(document_id));
 
 -- Owners can update shares for their documents
 CREATE POLICY "Owners can update shares" 
   ON document_shares FOR UPDATE 
-  USING (
-    EXISTS (
-      SELECT 1 FROM documents 
-      WHERE id = document_shares.document_id 
-      AND owner_id = auth.uid()
-    )
-  );
+  USING (is_document_owner(document_id));
 
 -- Owners can delete shares for their documents
 CREATE POLICY "Owners can delete shares" 
   ON document_shares FOR DELETE 
-  USING (
-    EXISTS (
-      SELECT 1 FROM documents 
-      WHERE id = document_shares.document_id 
-      AND owner_id = auth.uid()
-    )
-  );
+  USING (is_document_owner(document_id));
 
 -- Function to automatically update the 'updated_at' timestamp
 CREATE OR REPLACE FUNCTION update_modified_column()
