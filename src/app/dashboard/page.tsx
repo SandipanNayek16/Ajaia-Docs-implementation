@@ -2,7 +2,8 @@ import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import { logout } from '@/app/login/actions'
 import { createDocument } from './actions'
-import { FileText, LogOut, Plus } from 'lucide-react'
+import { LogOut, Plus, FileText } from 'lucide-react'
+import Image from 'next/image'
 import Link from 'next/link'
 import ImportFile from '@/components/ImportFile'
 
@@ -56,7 +57,7 @@ export default async function DashboardPage() {
         <div className="mx-auto flex h-14 max-w-5xl items-center justify-between px-4 sm:px-6">
           <div className="flex items-center gap-3">
             <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-zinc-900 text-white shadow-sm">
-              <FileText className="h-3.5 w-3.5" />
+              <Image src="/icon.jpeg" alt="Document" width={16} height={16} className="h-3.5 w-3.5" />
             </div>
             <span className="text-base font-semibold tracking-tight text-zinc-900 font-serif">Ajaia Docs</span>
           </div>
@@ -99,7 +100,7 @@ export default async function DashboardPage() {
             
             {!myDocs || myDocs.length === 0 ? (
               <div className="flex flex-col items-center justify-center rounded-xl border border-zinc-200 bg-white py-10 px-4 text-center shadow-sm">
-                <FileText className="h-8 w-8 text-zinc-300 mb-3" />
+                <Image src="/icon.jpeg" alt="Document" width={32} height={32} className="h-8 w-8 text-zinc-300 mb-3" />
                 <h3 className="text-base font-medium text-zinc-900 font-serif">No documents yet</h3>
                 <p className="mt-1 text-sm text-zinc-500 max-w-sm mb-6">Create your first document or import an existing file to get started.</p>
                 <div className="flex items-center gap-3 flex-wrap justify-center">

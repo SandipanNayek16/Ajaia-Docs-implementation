@@ -37,6 +37,10 @@ export default function ImportFile({ userId }: { userId: string }) {
           })) : [{ type: "paragraph" }]
         }
       } else if (file.type === 'application/pdf') {
+        // Guard against very large PDFs – limit to 5 MB to avoid serverless memory blow‑outs
+        if (file.size > 5 * 1024 * 1024) {
+          throw new Error('PDF file too large (max 5 MB). Please reduce the file size before uploading.')
+        }
         const formData = new FormData()
         formData.append('file', file)
         
