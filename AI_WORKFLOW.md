@@ -1,24 +1,22 @@
 # AI Workflow
 
-This project was built primarily by an autonomous AI agent (Google Antigravity) with human-in-the-loop oversight.
+This project was built leveraging an AI-native workflow, treating the AI as an autonomous pair programmer.
 
-## Setup & Planning
-1. The AI analyzed the prompt requirements and constraints (4-6 hour timebox, no Google Docs clone, focus on polish).
-2. The AI generated a comprehensive implementation plan (`implementation_plan.md`), defining the tech stack (Next.js, Supabase, Tiptap, Tailwind) and the architectural approach.
-3. The human engineer reviewed and approved the plan, acting as a Product Manager.
+## 1. Which AI tools you used
+I used **Google Antigravity**, an agentic AI coding assistant designed to handle complex, multi-file software engineering tasks autonomously.
 
-## Execution
-The AI executed the plan iteratively:
-- **Phase 1: Foundation**: Set up Next.js, installed Tailwind, shadcn/ui, and configured the Supabase database schema and RLS policies via SQL scripts.
-- **Phase 2: Authentication**: Implemented Supabase SSR Auth, creating middleware to protect routes, and built the Login interface with seeded demo accounts.
-- **Phase 3: Core Editor**: Integrated Tiptap, implemented a custom toolbar, and built the debounced autosave mechanism using Next.js Server Actions.
-- **Phase 4: Dashboard & Sharing**: Built the dashboard to list owned and shared documents. Developed the Share Modal and implemented the sharing logic (viewer/editor permissions).
-- **Phase 5: Import & Polish**: Added the ability to import `.txt` and `.md` files directly into the editor, converting them to Tiptap JSON.
-- **Phase 6: Testing**: Wrote Vitest unit tests to verify the authorization logic (`authz.ts`) ensuring that users can only modify documents they own or have editor permissions for.
+## 2. Where AI materially sped up your work
+The AI significantly accelerated development in several key areas:
+- **Scaffolding and Boilerplate**: Setting up the Next.js App Router, integrating Tailwind CSS with shadcn/ui, and wiring up the initial Supabase SSR clients were completed in minutes instead of an hour.
+- **Database Architecture**: The AI instantly generated robust SQL schemas and PostgreSQL Row Level Security (RLS) policies (`schema.sql`), ensuring data access was secure by default without me having to manually write complex SQL.
+- **Component Implementation**: Integrating the Tiptap editor and building a custom formatting toolbar would normally require extensive documentation reading, but the AI generated a working, styled component out of the box.
 
-## Prompts & Interactions
-The human primarily provided high-level directives and course corrections:
-- "Please implement the Sharing UI."
-- "Write an automated test around document access/sharing authorization using Vitest."
+## 3. What AI-generated output you changed or rejected
+While the AI was highly capable, I had to course-correct and refine its output:
+- **Vitest Mocking**: The AI initially struggled with chaining mocks (`select().eq().single()`) in Vitest when testing Supabase. I stepped in and guided it to extract the authorization logic into a pure function (`authz.ts`) so we could test the business logic directly without wrestling with complex ORM mocks.
+- **Scope Creep**: I acted as the Product Manager, explicitly preventing the AI from attempting to build WebSockets or real-time Yjs syncing, prioritizing a stable, debounced autosave architecture instead to fit within the timebox.
 
-The AI handled all code generation, terminal commands, file writing, and test running. The AI also automatically corrected issues it encountered (e.g., mocking Supabase chaining in Vitest).
+## 4. How you verified correctness, UX quality, and implementation reliability
+- **Correctness**: I instructed the AI to write an automated test suite (`authz.test.ts`) covering the critical authorization matrix to ensure that viewers couldn't edit documents and unrelated users couldn't read them. 
+- **UX Quality**: I reviewed the frontend visually at each step, ensuring the shadcn/ui components felt premium and cohesive. I explicitly requested features like inline-title renaming and clean empty states.
+- **Reliability**: I relied heavily on Supabase's Row Level Security (RLS). By verifying the RLS policies in `schema.sql`, I ensured that even if a frontend component or Server Action had a vulnerability, the database itself would reject unauthorized queries.
