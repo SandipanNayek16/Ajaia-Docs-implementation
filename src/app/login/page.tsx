@@ -73,6 +73,17 @@ export default async function LoginPage(props: {
             <h1 className="text-3xl font-semibold tracking-tight text-zinc-900 mb-2">Welcome back</h1>
             <p className="text-zinc-500 text-base">Enter your credentials to access your workspace.</p>
           </div>
+          
+          <div className="mb-8 p-4 bg-blue-50/50 border border-blue-100 rounded-xl">
+            <h3 className="text-sm font-semibold text-blue-900 mb-1 flex items-center gap-2">
+              <div className="w-1.5 h-1.5 rounded-full bg-blue-600"></div>
+              Demo Credentials
+            </h3>
+            <div className="text-sm text-blue-700/80 space-y-1 mt-2">
+              <p>Email: <span className="font-medium text-blue-900 select-all">alice@ajaia-demo.com</span></p>
+              <p>Password: <span className="font-medium text-blue-900 select-all">password123</span></p>
+            </div>
+          </div>
 
           <form action={login} className="space-y-6">
             
