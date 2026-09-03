@@ -35,12 +35,11 @@ export default function Editor({
     try {
       await updateDocument(documentId, newTitle, newContent)
       setSaveState('saved')
-      router.refresh()
     } catch (err) {
       console.error(err)
       setSaveState('error')
     }
-  }, [documentId, router])
+  }, [documentId])
 
   const editor = useEditor({
     extensions: [StarterKit, Underline],
@@ -73,10 +72,19 @@ export default function Editor({
 
   const handleTitleBlur = () => {
     if (isViewer) return
-    if (!title.trim()) {
-      setTitle('Untitled document')
-      saveDocument('Untitled document', editor?.getJSON())
+    
+    let finalTitle = title.trim()
+    if (!finalTitle) {
+      finalTitle = 'Untitled document'
+    } else if (finalTitle.length > 255) {
+      finalTitle = finalTitle.substring(0, 255)
     }
+    
+    if (title !== finalTitle) {
+      setTitle(finalTitle)
+    }
+    
+    saveDocument(finalTitle, editor?.getJSON())
   }
 
   if (!editor) {

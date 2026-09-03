@@ -45,7 +45,7 @@ export default async function DashboardPage() {
   const { data: sharedDocs } = await supabase
     .from('document_shares')
     .select('*, documents(*)')
-    .eq('user_email', user.email)
+    .eq('user_email', user.email?.toLowerCase().trim())
     .order('created_at', { ascending: false })
 
   const totalDocs = (myDocs?.length || 0) + (sharedDocs?.length || 0);

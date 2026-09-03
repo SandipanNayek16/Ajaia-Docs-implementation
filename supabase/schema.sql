@@ -54,7 +54,7 @@ AS $$
   SELECT EXISTS (
     SELECT 1 FROM document_shares 
     WHERE document_id = doc_id 
-    AND user_email = (SELECT email FROM auth.users WHERE id = auth.uid())
+    AND user_email = LOWER((SELECT email FROM auth.users WHERE id = auth.uid()))
   );
 $$;
 
@@ -72,7 +72,7 @@ AS $$
     SELECT 1 FROM document_shares 
     WHERE document_id = doc_id 
     AND permission = 'editor'
-    AND user_email = (SELECT email FROM auth.users WHERE id = auth.uid())
+    AND user_email = LOWER((SELECT email FROM auth.users WHERE id = auth.uid()))
   );
 $$;
 
@@ -102,7 +102,7 @@ CREATE POLICY "Owners can view shares"
 -- Shared users can view their own shares
 CREATE POLICY "Users can view their own shares" 
   ON document_shares FOR SELECT 
-  USING (user_email = (SELECT email FROM auth.users WHERE id = auth.uid()));
+  USING (user_email = LOWER((SELECT email FROM auth.users WHERE id = auth.uid())));
 
 -- Owners can insert shares for their documents
 CREATE POLICY "Owners can insert shares" 
@@ -132,3 +132,13 @@ CREATE TRIGGER update_documents_updated_at
 BEFORE UPDATE ON documents
 FOR EACH ROW
 EXECUTE FUNCTION update_modified_column();
+
+-- Function to check if a user exists by email (useful for share validation)
+CREATE OR REPLACE FUNCTION user_exists_by_email(check_email TEXT)
+RETURNS BOOLEAN
+LANGUAGE sql SECURITY DEFINER SET search_path = public
+AS $$
+  SELECT EXISTS (
+    SELECT 1 FROM auth.users WHERE email = check_email
+  );
+$$;

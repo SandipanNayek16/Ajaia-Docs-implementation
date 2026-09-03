@@ -31,7 +31,7 @@ You can test the application sharing flow using the following seeded accounts:
 
 ## Tech Stack
 
-- **Frontend**: Next.js 15 (App Router), React 19, TypeScript, Tailwind CSS v4, shadcn/ui.
+- **Frontend**: Next.js 16.3.4 (App Router), React 19, TypeScript, Tailwind CSS v4, shadcn/ui.
 - **Editor**: Tiptap (persists structured JSON).
 - **Backend**: Next.js Server Actions & Route Handlers.
 - **Database & Auth**: Supabase (PostgreSQL, Supabase Auth, Row Level Security).

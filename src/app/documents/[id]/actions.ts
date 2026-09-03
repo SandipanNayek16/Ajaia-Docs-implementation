@@ -4,6 +4,19 @@ import { createClient } from '@/lib/supabase/server'
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export async function updateDocument(documentId: string, title: string, content: any) {
+  // Validate title
+  let finalTitle = (title || '').trim();
+  if (!finalTitle) {
+    finalTitle = 'Untitled document';
+  } else if (finalTitle.length > 255) {
+    finalTitle = finalTitle.substring(0, 255);
+  }
+
+  // Validate content (minimal Tiptap structure check)
+  if (!content || typeof content !== 'object' || content.type !== 'doc' || !Array.isArray(content.content)) {
+    throw new Error('Invalid document content payload')
+  }
+
   const supabase = await createClient()
 
   const { data: { user } } = await supabase.auth.getUser()
@@ -29,7 +42,7 @@ export async function updateDocument(documentId: string, title: string, content:
       .from('document_shares')
       .select('permission')
       .eq('document_id', documentId)
-      .eq('user_email', user.email)
+      .eq('user_email', user.email?.toLowerCase().trim())
       .single()
       
     if (!share || share.permission !== 'editor') {
@@ -39,7 +52,7 @@ export async function updateDocument(documentId: string, title: string, content:
 
   const { error } = await supabase
     .from('documents')
-    .update({ title, content })
+    .update({ title: finalTitle, content })
     .eq('id', documentId)
 
   if (error) {
@@ -64,15 +77,37 @@ export async function shareDocument(documentId: string, email: string, permissio
     throw new Error('Only the owner can share this document')
   }
 
-  if (email.toLowerCase().trim() === user.email?.toLowerCase().trim()) {
+  const normalizedEmail = email.trim().toLowerCase()
+
+  if (normalizedEmail === user.email?.toLowerCase().trim()) {
     throw new Error('You cannot share a document with yourself')
+  }
+
+  // Check if target user exists
+  const { data: userExists } = await supabase
+    .rpc('user_exists_by_email', { check_email: normalizedEmail })
+
+  if (!userExists) {
+    throw new Error('That user does not have an account.')
+  }
+
+  // Check if already shared with this exact permission
+  const { data: existingShare } = await supabase
+    .from('document_shares')
+    .select('permission')
+    .eq('document_id', documentId)
+    .eq('user_email', normalizedEmail)
+    .single()
+
+  if (existingShare && existingShare.permission === permission) {
+    return // Already shared, no-op
   }
 
   const { error } = await supabase
     .from('document_shares')
     .upsert({ 
       document_id: documentId, 
-      user_email: email, 
+      user_email: normalizedEmail, 
       permission 
     }, { onConflict: 'document_id,user_email' })
 

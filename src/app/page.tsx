@@ -119,16 +119,16 @@ export default function HomePage() {
                   Engineering Spec & Strategy
                 </div>
                 <h2 className="text-2xl sm:text-3xl font-bold text-white tracking-tight mb-4 font-serif">
-                  Ajaia Collaborative Architecture
+                  Ajaia Collaborative Workspace
                 </h2>
                 <p className="text-sm sm:text-base text-zinc-300 leading-relaxed mb-6">
-                  A high-throughput collaborative document editor built on top of Supabase PostgreSQL and Row-Level Security. Enables real-time synchronized editing with zero data loss.
+                  Collaborative document workspace with rich-text editing, persistent documents, file import, and role-based sharing.
                 </p>
 
                 <div className="space-y-2.5 text-xs sm:text-sm text-zinc-400">
                   <div className="flex items-center gap-2.5">
                     <span className="h-1.5 w-1.5 rounded-full bg-blue-400"></span>
-                    <span>Multiplayer CRDT synchronization engine with sub-50ms latency</span>
+                    <span>Rich-text editing with seamless document persistence</span>
                   </div>
                   <div className="flex items-center gap-2.5">
                     <span className="h-1.5 w-1.5 rounded-full bg-teal-400"></span>
@@ -136,7 +136,7 @@ export default function HomePage() {
                   </div>
                   <div className="flex items-center gap-2.5">
                     <span className="h-1.5 w-1.5 rounded-full bg-purple-400"></span>
-                    <span>Native PDF import with server-side text extraction pipeline</span>
+                    <span>Direct text and Markdown file import</span>
                   </div>
                 </div>
 

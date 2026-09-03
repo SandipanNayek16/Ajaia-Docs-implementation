@@ -16,65 +16,38 @@ export default function ImportFile({ userId }: { userId: string }) {
     const file = e.target.files?.[0]
     if (!file) return
 
-    // All data types allowed
+    if (!file.name.endsWith('.txt') && !file.name.endsWith('.md')) {
+      setErrorMsg("Unsupported file type. Please upload a .txt or .md file.")
+      if (fileInputRef.current) fileInputRef.current.value = ''
+      return
+    }
+
+    if (file.size === 0) {
+      setErrorMsg("Cannot import an empty file.")
+      if (fileInputRef.current) fileInputRef.current.value = ''
+      return
+    }
+
+    if (file.size > 5 * 1024 * 1024) {
+      setErrorMsg("File is too large (max 5 MB).")
+      if (fileInputRef.current) fileInputRef.current.value = ''
+      return
+    }
 
     setIsUploading(true)
 
     try {
       const title = file.name.replace(/\.[^/.]+$/, "")
-      let content;
-
-      // Check if it's a text-based file
-      if (file.type.startsWith('text/') || file.type === 'application/json' || file.name.endsWith('.md') || file.name.endsWith('.csv')) {
-        const text = await file.text()
-        const paragraphs = text.split('\n\n').filter(p => p.trim() !== '')
-        
-        content = {
-          type: "doc",
-          content: paragraphs.length > 0 ? paragraphs.map(p => ({
-            type: "paragraph",
-            content: [{ type: "text", text: p.trim() }]
-          })) : [{ type: "paragraph" }]
-        }
-      } else if (file.type === 'application/pdf') {
-        // Guard against very large PDFs – limit to 5 MB to avoid serverless memory blow‑outs
-        if (file.size > 5 * 1024 * 1024) {
-          throw new Error('PDF file too large (max 5 MB). Please reduce the file size before uploading.')
-        }
-        const formData = new FormData()
-        formData.append('file', file)
-        
-        const res = await fetch('/api/parse-pdf', {
-          method: 'POST',
-          body: formData
-        })
-        
-        if (!res.ok) {
-          const errorData = await res.json().catch(() => ({}))
-          throw new Error(`PDF API Error: ${errorData.error || 'Failed to parse PDF file'}`)
-        }
-        
-        const { text } = await res.json()
-        const paragraphs = text.split('\n\n').filter((p: string) => p.trim() !== '')
-        
-        content = {
-          type: "doc",
-          content: paragraphs.length > 0 ? paragraphs.map((p: string) => ({
-            type: "paragraph",
-            content: [{ type: "text", text: p.trim() }]
-          })) : [{ type: "paragraph" }]
-        }
-      } else {
-        // For binary files, images, etc., create a placeholder document
-        content = {
-          type: "doc",
-          content: [
-            {
-              type: "paragraph",
-              content: [{ type: "text", text: `[Imported ${file.type || 'binary'} file: ${file.name}]` }]
-            }
-          ]
-        }
+      
+      const text = await file.text()
+      const paragraphs = text.split('\n\n').filter(p => p.trim() !== '')
+      
+      const content = {
+        type: "doc",
+        content: paragraphs.length > 0 ? paragraphs.map(p => ({
+          type: "paragraph",
+          content: [{ type: "text", text: p.trim() }]
+        })) : [{ type: "paragraph" }]
       }
 
       const supabase = createClient()
@@ -90,15 +63,17 @@ export default function ImportFile({ userId }: { userId: string }) {
         .select()
         .single()
 
-      if (error) throw new Error(`Supabase error: ${error.message} - ${error.details || ''}`)
-      if (!data) throw new Error('No data returned from insert')
+      if (error) {
+        console.error('Database import error:', error)
+        throw new Error('Failed to import document. Please try again.')
+      }
+      if (!data) throw new Error('Failed to import document. Please try again.')
 
       router.push(`/documents/${data.id}`)
     } catch (e: unknown) {
       const err = e as { message?: string }
       console.error('Import failed', err?.message || e)
-      console.error('Full error object:', JSON.stringify(e, Object.getOwnPropertyNames(e as object)))
-      setErrorMsg(`Unable to import this file: ${err?.message || 'Unknown error'}`)
+      setErrorMsg(err?.message || 'Failed to import document. Please try again.')
     } finally {
       setIsUploading(false)
       if (fileInputRef.current) fileInputRef.current.value = ''
@@ -111,6 +86,7 @@ export default function ImportFile({ userId }: { userId: string }) {
         <input 
           type="file" 
           ref={fileInputRef} 
+          accept=".txt,.md"
           onChange={handleFileChange} 
           className="hidden" 
         />

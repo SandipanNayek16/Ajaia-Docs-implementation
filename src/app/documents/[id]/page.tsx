@@ -25,7 +25,7 @@ export default async function DocumentPage({ params }: { params: Promise<{ id: s
       .from('document_shares')
       .select('*, documents(*)')
       .eq('document_id', id)
-      .eq('user_email', user.email)
+      .eq('user_email', user.email?.toLowerCase().trim())
       .single()
       
     if (!share || !share.documents) {
