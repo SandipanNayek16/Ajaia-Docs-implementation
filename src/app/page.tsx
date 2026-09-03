@@ -1,5 +1,7 @@
 import Link from 'next/link'
 import { ArrowRight, FileText, Share2, Shield, Zap } from 'lucide-react'
+import ColourfulText from '@/components/ui/colourful-text'
+import * as motion from 'motion/react-client'
 
 export default function HomePage() {
   return (
@@ -37,19 +39,31 @@ export default function HomePage() {
       </nav>
 
       {/* Hero Section */}
-      <main className="flex-1 flex flex-col items-center justify-center px-4 sm:px-6 lg:px-8 py-20 text-center">
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-zinc-100 text-sm font-medium text-zinc-800 mb-8 border border-zinc-200">
-          <span className="flex h-2 w-2 rounded-full bg-blue-600"></span>
-          Now available in early access
-        </div>
+      <main className="flex-1 flex flex-col items-center justify-center px-4 sm:px-6 lg:px-8 py-32 text-center relative overflow-hidden bg-zinc-950">
         
-        <h1 className="max-w-4xl text-5xl md:text-7xl font-bold tracking-tight text-zinc-900 mb-6 drop-shadow-sm">
-          The intelligent workspace for your best work.
-        </h1>
-        
-        <p className="max-w-2xl text-lg md:text-xl text-zinc-600 mb-10 leading-relaxed">
-          Write, edit, and share documents effortlessly. Ajaia Docs combines a premium editing experience with robust security to keep your team aligned and moving fast.
-        </p>
+        {/* Aceternity Animated Background */}
+        <motion.img
+          src="https://assets.aceternity.com/linear-demo.webp"
+          alt=""
+          className="h-full w-full object-cover absolute inset-0 [mask-image:radial-gradient(circle,transparent,black_80%)] pointer-events-none"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 0.5 }}
+          transition={{ duration: 1 }} 
+        />
+
+        <div className="relative z-10 flex flex-col items-center justify-center">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-zinc-900/50 backdrop-blur-md text-sm font-medium text-zinc-300 mb-8 border border-zinc-800">
+            <span className="flex h-2 w-2 rounded-full bg-blue-500 animate-pulse"></span>
+            Now available in early access
+          </div>
+          
+          <h1 className="max-w-4xl text-5xl md:text-7xl lg:text-8xl font-bold tracking-tight text-white mb-6 font-sans">
+            The intelligent <br className="hidden md:block" /> <ColourfulText text="workspace" /> <br /> for your best work.
+          </h1>
+          
+          <p className="max-w-2xl text-lg md:text-xl text-zinc-400 mb-10 leading-relaxed">
+            Write, edit, and share documents effortlessly. Ajaia Docs combines a premium editing experience with robust security to keep your team aligned and moving fast.
+          </p>
         
         <div className="flex flex-col sm:flex-row gap-4 items-center justify-center w-full">
           <Link 
@@ -68,14 +82,15 @@ export default function HomePage() {
         </div>
 
         {/* Product Mockup Image Placeholder */}
-        <div className="mt-20 w-full max-w-5xl rounded-2xl border border-zinc-200/50 bg-white/50 backdrop-blur-sm shadow-2xl p-2 sm:p-4 rotate-1 hover:rotate-0 transition-transform duration-500">
-          <div className="rounded-xl border border-zinc-200 bg-white shadow-sm overflow-hidden aspect-[16/9] flex items-center justify-center bg-zinc-50 relative">
-            <div className="absolute inset-0 bg-gradient-to-tr from-zinc-100 to-white"></div>
-            <div className="relative z-10 flex flex-col items-center justify-center text-zinc-400 gap-4">
+        <div className="mt-20 w-full max-w-5xl rounded-2xl border border-zinc-800 bg-black/50 backdrop-blur-sm shadow-2xl p-2 sm:p-4 rotate-1 hover:rotate-0 transition-transform duration-500 relative z-10">
+          <div className="rounded-xl border border-zinc-800 bg-zinc-950 shadow-sm overflow-hidden aspect-[16/9] flex items-center justify-center relative">
+            <div className="absolute inset-0 bg-gradient-to-tr from-zinc-900 to-black"></div>
+            <div className="relative z-10 flex flex-col items-center justify-center text-zinc-600 gap-4">
               <FileText className="h-16 w-16" />
-              <p className="font-medium text-lg">Beautiful editing interface</p>
+              <p className="font-medium text-lg text-zinc-400">Beautiful editing interface</p>
             </div>
           </div>
+        </div>
         </div>
       </main>
 
