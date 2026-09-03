@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { ArrowRight, FileText, Share2, Shield, Zap } from 'lucide-react'
 import ColourfulText from '@/components/ui/colourful-text'
+import { SparklesCore } from '@/components/ui/sparkles'
 import * as motion from 'motion/react-client'
 
 export default function HomePage() {
@@ -42,10 +43,21 @@ export default function HomePage() {
       <main className="flex-1 flex flex-col items-center justify-center px-4 sm:px-6 lg:px-8 py-32 text-center relative overflow-hidden bg-zinc-950">
         
         {/* Aceternity Animated Background */}
+        <div className="w-full absolute inset-0 h-full z-0">
+          <SparklesCore
+            id="tsparticlesfullpage"
+            background="transparent"
+            minSize={0.6}
+            maxSize={1.4}
+            particleDensity={100}
+            className="w-full h-full"
+            particleColor="#FFFFFF" 
+          />
+        </div>
         <motion.img
           src="https://assets.aceternity.com/linear-demo.webp"
           alt=""
-          className="h-full w-full object-cover absolute inset-0 [mask-image:radial-gradient(circle,transparent,black_80%)] pointer-events-none"
+          className="h-full w-full object-cover absolute inset-0 [mask-image:radial-gradient(circle,transparent,black_80%)] pointer-events-none z-0"
           initial={{ opacity: 0 }}
           animate={{ opacity: 0.5 }}
           transition={{ duration: 1 }} 

@@ -1,6 +1,7 @@
 import { login } from './actions'
 import { FileText, ArrowRight } from 'lucide-react'
 import Link from 'next/link'
+import { SparklesCore } from '@/components/ui/sparkles'
 
 export default async function LoginPage(props: {
   searchParams: Promise<{ error?: string }>
@@ -12,9 +13,23 @@ export default async function LoginPage(props: {
       
       {/* Left Pane: Branding & Abstract Design */}
       <div className="hidden md:flex md:w-[45%] lg:w-[40%] bg-zinc-950 p-12 flex-col justify-between relative overflow-hidden text-white">
+        
+        {/* Sparkles Background */}
+        <div className="w-full absolute inset-0 h-full">
+          <SparklesCore
+            id="tsparticleslogin"
+            background="transparent"
+            minSize={0.4}
+            maxSize={1}
+            particleDensity={50}
+            className="w-full h-full"
+            particleColor="#FFFFFF" 
+          />
+        </div>
+
         {/* Subtle background glow */}
-        <div className="absolute top-[-20%] left-[-10%] w-[70%] h-[70%] rounded-full bg-blue-600/20 blur-[100px] pointer-events-none"></div>
-        <div className="absolute bottom-[-20%] right-[-10%] w-[70%] h-[70%] rounded-full bg-purple-600/20 blur-[100px] pointer-events-none"></div>
+        <div className="absolute top-[-20%] left-[-10%] w-[70%] h-[70%] rounded-full bg-blue-600/20 blur-[100px] pointer-events-none z-0"></div>
+        <div className="absolute bottom-[-20%] right-[-10%] w-[70%] h-[70%] rounded-full bg-purple-600/20 blur-[100px] pointer-events-none z-0"></div>
 
         <div className="relative z-10">
           <Link href="/" className="flex items-center gap-3 w-fit">
