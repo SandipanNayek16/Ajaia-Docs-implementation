@@ -46,7 +46,7 @@ export default async function DocumentPage({ params }: { params: Promise<{ id: s
         documentId={share.documents.id} 
         initialTitle={share.documents.title} 
         initialContent={share.documents.content} 
-        isOwner={false}
+        role={share.permission}
       />
     )
   }
@@ -56,7 +56,7 @@ export default async function DocumentPage({ params }: { params: Promise<{ id: s
       documentId={doc.id} 
       initialTitle={doc.title} 
       initialContent={doc.content} 
-      isOwner={true}
+      role="owner"
     />
   )
 }

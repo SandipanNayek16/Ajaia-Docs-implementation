@@ -7,15 +7,17 @@ import { useRouter } from 'next/navigation'
 
 export default function ImportFile({ userId }: { userId: string }) {
   const [isUploading, setIsUploading] = useState(false)
+  const [errorMsg, setErrorMsg] = useState<string | null>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
   const router = useRouter()
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    setErrorMsg(null)
     const file = e.target.files?.[0]
     if (!file) return
 
     if (!file.name.endsWith('.txt') && !file.name.endsWith('.md')) {
-      alert('Unsupported file type. Please upload a .txt or .md file.')
+      setErrorMsg('Unsupported file type. Please upload a .txt or .md file.')
       return
     }
 
@@ -61,7 +63,7 @@ export default function ImportFile({ userId }: { userId: string }) {
       router.push(`/documents/${data.id}`)
     } catch (e) {
       console.error('Import failed', e)
-      alert('Failed to import file')
+      setErrorMsg('Unable to import this file. Please try again.')
     } finally {
       setIsUploading(false)
       if (fileInputRef.current) fileInputRef.current.value = ''
@@ -69,22 +71,29 @@ export default function ImportFile({ userId }: { userId: string }) {
   }
 
   return (
-    <>
-      <input 
-        type="file" 
-        accept=".txt,.md" 
-        ref={fileInputRef} 
-        onChange={handleFileChange} 
-        className="hidden" 
-      />
-      <button 
-        onClick={() => fileInputRef.current?.click()}
-        disabled={isUploading}
-        className="inline-flex items-center justify-center gap-2 rounded-md bg-white border border-zinc-200 px-4 py-2 text-sm font-medium text-zinc-700 shadow-sm hover:bg-zinc-50 hover:text-zinc-900 transition-colors disabled:opacity-50"
-      >
-        <Upload className="h-4 w-4" />
-        {isUploading ? 'Importing...' : 'Import File'}
-      </button>
-    </>
+    <div className="flex flex-col items-end gap-2 relative">
+      <div className="flex items-center gap-3">
+        <input 
+          type="file" 
+          accept=".txt,.md" 
+          ref={fileInputRef} 
+          onChange={handleFileChange} 
+          className="hidden" 
+        />
+        <button 
+          onClick={() => fileInputRef.current?.click()}
+          disabled={isUploading}
+          className="inline-flex items-center justify-center gap-2 rounded-md bg-white border border-zinc-200 px-4 py-2 text-sm font-medium text-zinc-700 shadow-sm hover:bg-zinc-50 hover:text-zinc-900 transition-colors disabled:opacity-50"
+        >
+          <Upload className="h-4 w-4" />
+          {isUploading ? 'Importing...' : 'Import File'}
+        </button>
+      </div>
+      {errorMsg && (
+        <div className="absolute top-full mt-2 right-0 bg-red-50 text-red-600 text-xs px-3 py-2 rounded-md border border-red-100 whitespace-nowrap shadow-sm z-20">
+          {errorMsg}
+        </div>
+      )}
+    </div>
   )
 }

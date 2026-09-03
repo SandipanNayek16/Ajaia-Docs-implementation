@@ -13,13 +13,15 @@ export default function Editor({
   documentId, 
   initialTitle, 
   initialContent, 
-  isOwner 
+  role 
 }: { 
   documentId: string
   initialTitle: string
   initialContent: any
-  isOwner: boolean
+  role: 'owner' | 'editor' | 'viewer'
 }) {
+  const isOwner = role === 'owner'
+  const isViewer = role === 'viewer'
   const [title, setTitle] = useState(initialTitle)
   const [saveState, setSaveState] = useState<'saved' | 'saving' | 'error'>('saved')
   const [isShareModalOpen, setIsShareModalOpen] = useState(false)
@@ -41,7 +43,10 @@ export default function Editor({
   const editor = useEditor({
     extensions: [StarterKit, Underline],
     content: initialContent,
+    editable: !isViewer,
     onUpdate: ({ editor }) => {
+      if (isViewer) return
+      
       setSaveState('saving')
       if (saveTimeoutRef.current) clearTimeout(saveTimeoutRef.current)
       
@@ -51,8 +56,8 @@ export default function Editor({
     },
   })
 
-  // Handle title changes
   const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (isViewer) return
     const newTitle = e.target.value
     setTitle(newTitle)
     
@@ -65,6 +70,7 @@ export default function Editor({
   }
 
   const handleTitleBlur = () => {
+    if (isViewer) return
     if (!title.trim()) {
       setTitle('Untitled document')
       saveDocument('Untitled document', editor?.getJSON())
@@ -91,16 +97,25 @@ export default function Editor({
               value={title}
               onChange={handleTitleChange}
               onBlur={handleTitleBlur}
-              className="px-2 py-1 text-lg font-medium bg-transparent border-transparent focus:border-zinc-300 focus:bg-white focus:ring-0 rounded-md transition-all flex-1 max-w-md truncate"
+              disabled={isViewer}
+              readOnly={isViewer}
+              className="px-2 py-1 text-lg font-medium bg-transparent border-transparent focus:border-zinc-300 focus:bg-white focus:ring-0 rounded-md transition-all flex-1 max-w-md truncate disabled:opacity-100 disabled:bg-transparent"
               placeholder="Untitled document"
             />
+            {isViewer && (
+              <span className="inline-flex items-center rounded-md bg-zinc-100 px-2 py-1 text-xs font-medium text-zinc-600 ring-1 ring-inset ring-zinc-500/10">
+                View only
+              </span>
+            )}
           </div>
           <div className="flex items-center gap-4">
-            <span className="text-xs text-zinc-500">
-              {saveState === 'saved' && 'Saved just now'}
-              {saveState === 'saving' && 'Saving...'}
-              {saveState === 'error' && 'Unable to save'}
-            </span>
+            {!isViewer && (
+              <span className="text-xs text-zinc-500 font-medium">
+                {saveState === 'saved' && 'Saved'}
+                {saveState === 'saving' && 'Saving...'}
+                {saveState === 'error' && 'Couldn\'t save'}
+              </span>
+            )}
             {isOwner && (
               <button 
                 onClick={() => setIsShareModalOpen(true)}
@@ -113,7 +128,8 @@ export default function Editor({
         </div>
         
         {/* Toolbar */}
-        <div className="border-t border-zinc-200 bg-white px-4 py-2 sm:px-6 overflow-x-auto">
+        {!isViewer && (
+          <div className="border-t border-zinc-200 bg-white px-4 py-2 sm:px-6 overflow-x-auto">
           <div className="mx-auto max-w-4xl flex items-center gap-1">
             <button
               onClick={() => editor.chain().focus().toggleBold().run()}
@@ -198,6 +214,7 @@ export default function Editor({
             </button>
           </div>
         </div>
+        )}
       </header>
 
       <main className="flex-1 mx-auto max-w-4xl w-full p-4 sm:p-8 md:py-12">

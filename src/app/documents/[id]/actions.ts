@@ -64,6 +64,10 @@ export async function shareDocument(documentId: string, email: string, permissio
     throw new Error('Only the owner can share this document')
   }
 
+  if (email.toLowerCase().trim() === user.email?.toLowerCase().trim()) {
+    throw new Error('You cannot share a document with yourself')
+  }
+
   const { error } = await supabase
     .from('document_shares')
     .upsert({ 
