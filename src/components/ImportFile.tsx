@@ -46,7 +46,8 @@ export default function ImportFile({ userId }: { userId: string }) {
         })
         
         if (!res.ok) {
-          throw new Error('Failed to parse PDF file')
+          const errorData = await res.json().catch(() => ({}))
+          throw new Error(`PDF API Error: ${errorData.error || 'Failed to parse PDF file'}`)
         }
         
         const { text } = await res.json()
