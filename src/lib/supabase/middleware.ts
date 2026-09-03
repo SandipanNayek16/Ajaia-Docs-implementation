@@ -33,6 +33,7 @@ export async function updateSession(request: NextRequest) {
   // Protect routes
   if (
     !user &&
+    request.nextUrl.pathname !== '/' &&
     !request.nextUrl.pathname.startsWith('/login') &&
     !request.nextUrl.pathname.startsWith('/auth')
   ) {
