@@ -36,6 +36,29 @@ export default function ImportFile({ userId }: { userId: string }) {
             content: [{ type: "text", text: p.trim() }]
           })) : [{ type: "paragraph" }]
         }
+      } else if (file.type === 'application/pdf') {
+        const formData = new FormData()
+        formData.append('file', file)
+        
+        const res = await fetch('/api/parse-pdf', {
+          method: 'POST',
+          body: formData
+        })
+        
+        if (!res.ok) {
+          throw new Error('Failed to parse PDF file')
+        }
+        
+        const { text } = await res.json()
+        const paragraphs = text.split('\n\n').filter((p: string) => p.trim() !== '')
+        
+        content = {
+          type: "doc",
+          content: paragraphs.length > 0 ? paragraphs.map((p: string) => ({
+            type: "paragraph",
+            content: [{ type: "text", text: p.trim() }]
+          })) : [{ type: "paragraph" }]
+        }
       } else {
         // For binary files, images, etc., create a placeholder document
         content = {
