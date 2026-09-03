@@ -58,7 +58,7 @@ export default async function DashboardPage() {
           <div className="flex items-center gap-3">
             <ImportFile userId={user.id} />
             <form action={createDocument}>
-              <button className="inline-flex items-center justify-center gap-2 rounded-md bg-zinc-900 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-zinc-800 transition-colors">
+              <button type="submit" className="inline-flex items-center justify-center gap-2 rounded-md bg-zinc-900 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-zinc-800 transition-colors">
                 <Plus className="h-4 w-4" />
                 New Document
               </button>

@@ -16,10 +16,7 @@ export default function ImportFile({ userId }: { userId: string }) {
     const file = e.target.files?.[0]
     if (!file) return
 
-    if (!file.name.endsWith('.txt') && !file.name.endsWith('.md')) {
-      setErrorMsg('Unsupported file type. Please upload a .txt or .md file.')
-      return
-    }
+    // All data types allowed
 
     setIsUploading(true)
 
@@ -75,7 +72,6 @@ export default function ImportFile({ userId }: { userId: string }) {
       <div className="flex items-center gap-3">
         <input 
           type="file" 
-          accept=".txt,.md" 
           ref={fileInputRef} 
           onChange={handleFileChange} 
           className="hidden" 
