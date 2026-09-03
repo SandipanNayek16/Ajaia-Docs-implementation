@@ -1,8 +1,9 @@
 "use client";
 import React, { useId } from "react";
-import Particles, { initParticlesEngine } from "@tsparticles/react";
+import Particles from "@tsparticles/react";
 import { loadSlim } from "@tsparticles/slim";
 import { useEffect, useState } from "react";
+import { tsParticles } from "@tsparticles/engine";
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 
@@ -34,9 +35,7 @@ export const SparklesCore = (props: {
   const [init, setInit] = useState(false);
   
   useEffect(() => {
-    initParticlesEngine(async (engine) => {
-      await loadSlim(engine);
-    }).then(() => {
+    loadSlim(tsParticles).then(() => {
       setInit(true);
     });
   }, []);

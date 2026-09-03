@@ -54,14 +54,6 @@ export default function HomePage() {
             particleColor="#FFFFFF" 
           />
         </div>
-        <motion.img
-          src="https://assets.aceternity.com/linear-demo.webp"
-          alt=""
-          className="h-full w-full object-cover absolute inset-0 [mask-image:radial-gradient(circle,transparent,black_80%)] pointer-events-none z-0"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 0.5 }}
-          transition={{ duration: 1 }} 
-        />
 
         <div className="relative z-10 flex flex-col items-center justify-center">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-zinc-900/50 backdrop-blur-md text-sm font-medium text-zinc-300 mb-8 border border-zinc-800">
