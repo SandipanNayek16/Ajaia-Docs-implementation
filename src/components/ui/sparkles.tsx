@@ -64,6 +64,7 @@ export const SparklesCore = (props: {
                   mode: "repulse",
                 },
                 resize: {},
+              },
               modes: {
                 push: {
                   quantity: 4,
