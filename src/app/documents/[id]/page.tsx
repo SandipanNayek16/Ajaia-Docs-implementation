@@ -34,7 +34,7 @@ export default async function DocumentPage({ params }: { params: Promise<{ id: s
          <div className="flex min-h-screen items-center justify-center bg-zinc-50">
            <div className="text-center">
              <h1 className="text-2xl font-semibold text-zinc-900 mb-2">Document not found</h1>
-             <p className="text-zinc-500 mb-6">You either don't have access or it doesn't exist.</p>
+             <p className="text-zinc-500 mb-6">You either don&apos;t have access or it doesn&apos;t exist.</p>
              <a href="/dashboard" className="text-sm font-medium text-zinc-900 bg-white border border-zinc-200 rounded-md px-4 py-2 hover:bg-zinc-50">Back to Dashboard</a>
            </div>
          </div>

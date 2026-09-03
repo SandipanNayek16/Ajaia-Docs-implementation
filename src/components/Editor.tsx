@@ -3,8 +3,8 @@
 import { useEditor, EditorContent } from '@tiptap/react'
 import StarterKit from '@tiptap/starter-kit'
 import Underline from '@tiptap/extension-underline'
-import { useEffect, useState, useCallback, useRef } from 'react'
-import { Bold, Italic, Underline as UnderlineIcon, Heading1, Heading2, Heading3, List, ListOrdered, Undo, Redo } from 'lucide-react'
+import { useState, useCallback, useRef } from 'react'
+import { Bold, Italic, Underline as UnderlineIcon, List, ListOrdered, Undo, Redo } from 'lucide-react'
 import { updateDocument } from '@/app/documents/[id]/actions'
 import { useRouter } from 'next/navigation'
 import ShareModal from './ShareModal'
@@ -17,6 +17,7 @@ export default function Editor({
 }: { 
   documentId: string
   initialTitle: string
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   initialContent: any
   role: 'owner' | 'editor' | 'viewer'
 }) {
@@ -28,6 +29,7 @@ export default function Editor({
   const saveTimeoutRef = useRef<NodeJS.Timeout | null>(null)
   const router = useRouter()
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const saveDocument = useCallback(async (newTitle: string, newContent: any) => {
     setSaveState('saving')
     try {

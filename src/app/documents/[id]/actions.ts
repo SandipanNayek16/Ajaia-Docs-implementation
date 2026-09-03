@@ -1,8 +1,8 @@
 'use server'
 
 import { createClient } from '@/lib/supabase/server'
-import { redirect } from 'next/navigation'
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export async function updateDocument(documentId: string, title: string, content: any) {
   const supabase = await createClient()
 

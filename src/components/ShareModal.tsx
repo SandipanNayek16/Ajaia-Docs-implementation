@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { shareDocument, getShares } from '@/app/documents/[id]/actions'
 import { X, Users, Check } from 'lucide-react'
 
@@ -15,24 +15,26 @@ export default function ShareModal({
 }) {
   const [email, setEmail] = useState('')
   const [permission, setPermission] = useState<'viewer' | 'editor'>('editor')
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [shares, setShares] = useState<any[]>([])
   const [status, setStatus] = useState<{ type: 'success' | 'error', message: string } | null>(null)
   const [loading, setLoading] = useState(false)
 
-  useEffect(() => {
-    if (isOpen) {
-      loadShares()
-    }
-  }, [isOpen])
-
-  const loadShares = async () => {
+  const loadShares = useCallback(async () => {
     try {
       const data = await getShares(documentId)
       setShares(data)
     } catch (e) {
       console.error(e)
     }
-  }
+  }, [documentId])
+
+  useEffect(() => {
+    if (isOpen) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      loadShares()
+    }
+  }, [isOpen, loadShares])
 
   const handleShare = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -46,6 +48,7 @@ export default function ShareModal({
       setStatus({ type: 'success', message: 'Document shared successfully' })
       setEmail('')
       loadShares()
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (e: any) {
       setStatus({ type: 'error', message: e.message || 'Failed to share document' })
     } finally {
