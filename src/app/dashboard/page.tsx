@@ -63,7 +63,7 @@ export default async function DashboardPage() {
           </div>
           
           <div className="flex items-center gap-3">
-            <span className="text-sm font-medium text-zinc-600 truncate max-w-[120px] sm:max-w-[200px]">{user.user_metadata.name || user.email}</span>
+            <span className="text-sm font-medium text-zinc-600 truncate max-w-[120px] sm:max-w-[200px]">{user.user_metadata?.name || user.email}</span>
             <form action={logout}>
               <button className="text-zinc-500 hover:text-zinc-900 transition-colors p-1.5 rounded-md hover:bg-zinc-100 flex items-center justify-center">
                 <LogOut className="h-4 w-4" />

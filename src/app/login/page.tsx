@@ -4,9 +4,9 @@ import Link from 'next/link'
 import { SparklesCore } from '@/components/ui/sparkles'
 
 export default async function LoginPage(props: {
-  searchParams: Promise<{ error?: string }>
+  searchParams?: Promise<{ error?: string }>
 }) {
-  const searchParams = await props.searchParams
+  const searchParams = (props?.searchParams ? await props.searchParams : {}) || {}
 
   return (
     <div className="min-h-screen flex flex-col md:flex-row bg-white">
@@ -93,7 +93,7 @@ export default async function LoginPage(props: {
 
           <form action={login} className="space-y-6">
             
-            {searchParams.error && (
+            {searchParams?.error && (
               <div className="p-3 bg-red-50/50 border border-red-200 text-red-600 rounded-xl text-sm font-medium flex items-center gap-2">
                 <div className="w-1.5 h-1.5 rounded-full bg-red-600"></div>
                 {searchParams.error}

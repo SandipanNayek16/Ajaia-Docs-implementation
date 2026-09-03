@@ -1,23 +1,18 @@
 import { createServerClient } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
 
+const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://plnerqnhrtsdwcfgutia.supabase.co'
+const SUPABASE_ANON_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'sb_publishable_nZj62yOgUAHbTHZfVk3wZA_VxMZDkFf'
+
 export async function updateSession(request: NextRequest) {
   try {
     let supabaseResponse = NextResponse.next({
       request,
     })
 
-    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
-    const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-
-    if (!supabaseUrl || !supabaseKey) {
-      console.warn('Missing Supabase environment variables in middleware.ts')
-      return supabaseResponse
-    }
-
     const supabase = createServerClient(
-      supabaseUrl,
-      supabaseKey,
+      SUPABASE_URL,
+      SUPABASE_ANON_KEY,
       {
         cookies: {
           getAll() {

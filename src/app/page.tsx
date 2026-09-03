@@ -3,7 +3,6 @@ import { ArrowRight, FileText, Share2, Shield, Zap } from 'lucide-react'
 import ColourfulText from '@/components/ui/colourful-text'
 import { SparklesCore } from '@/components/ui/sparkles'
 import { Meteors } from '@/components/ui/meteors'
-import * as motion from 'motion/react-client'
 
 export default function HomePage() {
   return (

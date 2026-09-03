@@ -94,10 +94,11 @@ export default function ImportFile({ userId }: { userId: string }) {
       if (!data) throw new Error('No data returned from insert')
 
       router.push(`/documents/${data.id}`)
-    } catch (e: any) {
-      console.error('Import failed', e?.message || e)
-      console.error('Full error object:', JSON.stringify(e, Object.getOwnPropertyNames(e)))
-      setErrorMsg(`Unable to import this file: ${e?.message || 'Unknown error'}`)
+    } catch (e: unknown) {
+      const err = e as { message?: string }
+      console.error('Import failed', err?.message || e)
+      console.error('Full error object:', JSON.stringify(e, Object.getOwnPropertyNames(e as object)))
+      setErrorMsg(`Unable to import this file: ${err?.message || 'Unknown error'}`)
     } finally {
       setIsUploading(false)
       if (fileInputRef.current) fileInputRef.current.value = ''
