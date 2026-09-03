@@ -1,8 +1,7 @@
 "use client";
 import React, { useId } from "react";
-import Particles, { initParticlesEngine } from "@tsparticles/react";
+import Particles from "@tsparticles/react";
 import { loadSlim } from "@tsparticles/slim";
-import { useEffect, useState } from "react";
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 
@@ -31,23 +30,17 @@ export const SparklesCore = (props: {
     particleDensity,
   } = props;
   
-  const [init, setInit] = useState(false);
-  
-  useEffect(() => {
-    initParticlesEngine(async (engine) => {
-      await loadSlim(engine);
-    }).then(() => {
-      setInit(true);
-    });
-  }, []);
+  const particlesInit = async (engine: any) => {
+    await loadSlim(engine);
+  };
   
   const generatedId = useId();
   
   return (
     <div className={cn("relative w-full h-full", className)}>
-      {init && (
         <Particles
           id={id || generatedId}
+          init={particlesInit}
           className="w-full h-full absolute inset-0"
           options={{
             background: {
@@ -70,8 +63,7 @@ export const SparklesCore = (props: {
                   enable: false,
                   mode: "repulse",
                 },
-                resize: true,
-              },
+                resize: {},
               modes: {
                 push: {
                   quantity: 4,
@@ -135,7 +127,6 @@ export const SparklesCore = (props: {
             detectRetina: true,
           }}
         />
-      )}
     </div>
   );
 };
